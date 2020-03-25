@@ -213,7 +213,7 @@ class CRUDL():
 
 
             def CurSelet1(evt):
-                SDM.ID_for_delete.cear()
+                SDM.ID_for_delete =""
                 SDM.ID_for_update.clear()
                 entry_for_name.delete(0,END)
                 entry_for_course.delete(0,END)
@@ -221,7 +221,7 @@ class CRUDL():
 
                 curItem = treeview.focus()
                 values=treeview.item(curItem)['values']
-                SDM.ID_for_delete= values[0]
+                SDM.ID_for_delete= ""
                 SDM.ID_for_update.append(values[0])
                 entry_for_name.insert(0,values[1])
                 entry_for_course.insert(0,values[2])
