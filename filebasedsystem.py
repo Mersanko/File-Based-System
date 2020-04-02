@@ -17,14 +17,14 @@ class CRUDL():
         self.list_for_search = []
         self.create_ID = ""
         self.create_ID1 = []
-        self.update_ID2 = []
+        self.update_ID = []
         self.update_name =[]
         self.update_course = []
         self.update_year_level = []
         self.delete_parameter = []
         self.csv_space_remover = []
         self.search_row = []
-        self.ID_for_delete = ""
+        self.ID_for_delete = []
         self.ID_for_update = []
 
 
@@ -184,7 +184,6 @@ class CRUDL():
                 for i in treeview.get_children():
                     treeview.delete(i)
                 SDM.list_to_be_display.clear()
-                SDM.list_for_del.clear()
                 SDM.list_for_search.clear()
                 SDM.update_name.clear()
                 SDM.update_course.clear()
@@ -213,7 +212,7 @@ class CRUDL():
 
 
             def CurSelet1(evt):
-                SDM.ID_for_delete =""
+                SDM.ID_for_delete.clear()
                 SDM.ID_for_update.clear()
                 entry_for_name.delete(0,END)
                 entry_for_course.delete(0,END)
@@ -221,7 +220,7 @@ class CRUDL():
 
                 curItem = treeview.focus()
                 values=treeview.item(curItem)['values']
-                SDM.ID_for_delete= ""
+                SDM.ID_for_delete.append(values[0])
                 SDM.ID_for_update.append(values[0])
                 entry_for_name.insert(0,values[1])
                 entry_for_course.insert(0,values[2])
@@ -229,11 +228,10 @@ class CRUDL():
                 entry_for_name.focus()
 
             def update_row():
-
                 SDM.list_to_be_display.clear()
                 SDM.list_for_del.clear()
                 SDM.list_for_search.clear()
-                SDM.update_ID2.clear()
+                SDM.update_ID.clear()
                 SDM.update_name.clear()
                 SDM.update_course.clear()
                 SDM.update_year_level.clear()
@@ -242,7 +240,7 @@ class CRUDL():
                 stud_name = entry_for_name.get()
                 stud_course = entry_for_course.get()
                 stud_year= entry_for_year_level.get()
-                SDM.update_ID2.append(stud_ID)
+                SDM.update_ID.append(stud_ID)
                 SDM.update_name.append(stud_name)
                 SDM.update_course.append(stud_course)
                 SDM.update_year_level.append(stud_year)
@@ -255,7 +253,7 @@ class CRUDL():
                     reader = csv.DictReader(csvfile, fieldnames=fields)
                     writer = csv.DictWriter(tempfile, fieldnames=fields)
                     for row in reader:
-                        if row['ID'] == str(stud_ID):
+                        if row['ID'] == str(SDM.update_ID[0]):
                             row['Name'], row['Course'], row['Year'] = SDM.update_name[0],SDM.update_course[0],SDM.update_year_level[0]
                         row = {'ID': row['ID'], 'Name': row['Name'], 'Course': row['Course'], 'Year': row['Year']}
                         writer.writerow(row)
@@ -264,21 +262,17 @@ class CRUDL():
                 clear_entry()
                 read_row()
             def delete_button():
-                x=SDM.ID_for_delete
-                if str(x)=="":
-                        messagebox.showinfo("Error","Insufficient data entry")
+                MsgBox = tk.messagebox.askquestion ('Deleting data','Are you sure you want to delete this data',icon = 'warning')
+                if MsgBox == 'yes':
+                    delete_row()
+                    csv_blank_row_remover()
+                    entry_for_name.focus()
                 else:
-                    MsgBox = tk.messagebox.askquestion ('Deleting data','Are you sure you want to delete this data',icon = 'warning')
-                    if MsgBox == 'yes':
-                        delete_row()
-                        csv_blank_row_remover()
-                        entry_for_name.focus()
-                    else:
-                        tk.messagebox.showinfo('Transaction Cancelled','You will now return to the application screen')
+                    tk.messagebox.showinfo('Transaction Cancelled','You will now return to the application screen')
 
 
             def delete_row():
-                x= SDM.ID_for_delete
+                x=SDM.ID_for_delete[0]
                 selected_items = treeview.selection()
                 for selected_item in selected_items:
                     treeview.delete(selected_item)
@@ -288,7 +282,7 @@ class CRUDL():
                             SDM.list_for_del.append(row)
                         for i in SDM.list_for_del:
                             if len(i)!=0:
-                                if i[0]==str(x):
+                                if i[0]==x:
                                     SDM.list_for_del.remove(i)
 
                     with open('crudlrevise.csv','w') as write_file:
@@ -333,7 +327,7 @@ class CRUDL():
                 stdnt_Name= entry_for_name.get()
                 stdnt_Course = entry_for_course.get()
                 stdnt_Year_level = entry_for_year_level.get()
-                if stdnt_Name=="" or stdnt_Course=="" or stdnt_Year_level==""or SDM.update_ID2 == "" :
+                if stdnt_Name=="" or stdnt_Course=="" or stdnt_Year_level==""or SDM.update_ID == "" :
                     messagebox.showinfo("Error","Insufficient data entry")
                 else:
                     MsgBox = tk.messagebox.askquestion ('Updating data','Are you sure you want to update this data',icon = 'warning')
